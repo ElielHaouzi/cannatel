@@ -1,0 +1,95 @@
+doctype html
+html(ng-app='ngBoilerplate', ng-controller='AppCtrl')
+head
+    title(ng-bind='pageTitle')
+    //
+       social media tags
+    meta(name='twitter:card', content='summary')
+    meta(name='twitter:site', content='@joshdmiller')
+    meta(name='twitter:title', content='ngBoilerplate')
+    meta(name='twitter:description', content='Non-Trivial AngularJS Made Easy: Everything you need to kickstart AngularJS projects: a best-practice directory structure, an intelligent build system, and the best web design libraries around.')
+    meta(name='twitter:creator', content='@joshdmiller')
+    meta(name='twitter:image:src', content='https://a248.e.akamai.net/assets.github.com/images/modules/logos_page/Octocat.png?1366128846')
+    meta(property='og:title', content='ngBoilerplate')
+    meta(property='og:type', content='website')
+    meta(property='og:url', content='http://bit.ly/ngBoilerplate')
+    meta(property='og:image', content='https://a248.e.akamai.net/assets.github.com/images/modules/logos_page/Octocat.png?1366128846')
+    meta(property='og:description', content='Non-Trivial AngularJS Made Easy: Everything you need to kickstart AngularJS projects: a best-practice directory structure, an intelligent build system, and the best web design libraries around.')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+
+    // font awesome from BootstrapCDN
+    link(href='http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css', rel='stylesheet')
+
+    // compiled CSS
+    <% styles.forEach( function ( file ) { %>
+    link(rel='stylesheet', href='<%= file %>')<% }); %>
+
+    // compiled JS
+    <% scripts.forEach( function ( file ) { %>
+    script(src='<%= file %>')<% }); %>
+
+  body
+    .container
+      .navbar.navbar-default
+        .navbar-header
+          button.navbar-toggle(type='button', ng-init='menuCollapsed = true', ng-click='menuCollapsed = ! menuCollapsed')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          .navbar-brand
+            | ngbp
+            small
+              a(href='href', http:='http:', github.com='github.com', ngbp='ngbp', blob='blob', v='v')
+        .collapse.navbar-collapse(collapse='menuCollapsed')
+          ul.nav.navbar-nav
+            li(ui-sref-active='active')
+              a(href='href', ui-sref='home')
+                i.fa.fa-home
+                |  Home
+            li(ui-sref-active='active')
+              a(href='href', ui-sref='about')
+                i.fa.fa-info-circle
+                |  What is it?
+            li
+              a(href='https://github.com/ngbp/ngbp')
+                i.fa.fa-github-alt
+                |  Github
+            li
+              a(href='https://github.com/ngbp/ngbp/issues')
+                i.fa.fa-comments
+                |  Support
+    .container(ui-view='main')
+    footer.footer
+      .container
+        .footer-inner
+          ul.social
+            li
+              a(target='_blank', href='http://gplus.to/joshdmiller')
+                i.fa.fa-google-plus-square
+            li
+              a(target='_blank', href='http://twitter.com/joshdmiller')
+                i.fa.fa-twitter-square
+            li
+              a(target='_blank', href='http://linkedin.com/in/joshdmiller')
+                i.fa.fa-linkedin-square
+            li
+              a(target='_blank', href='http://github.com/ngbp/ngbp')
+                i.fa.fa-github-square
+          p
+            | (c) 2013
+            a(href='http://www.joshdavidmiller.com') Josh David Miller
+            | .
+            a(href='http://github.com/ngbp/ngbp/fork_select') Fork this
+            | to kickstart your next project.
+            br
+            | ngbp is based on
+            a(href='http://www.angularjs.org') AngularJS
+            | ,
+            a(href='http://getbootstrap.com') Bootstrap
+            | ,
+            a(href='http://angular-ui.github.com/bootstrap') UI Bootstrap
+            | ,
+            | and
+            a(href='http://fortawesome.github.com/Font-Awesome') Font Awesome
+            | .

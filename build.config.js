@@ -9,6 +9,7 @@ module.exports = {
    */
   build_dir: 'build',
   compile_dir: 'bin',
+  tmp_dir: '.tmp',
 
   /**
    * This is a collection of file patterns that refer to our app code (the
@@ -22,15 +23,24 @@ module.exports = {
   app_files: {
     js: [ 'src/**/*.js', '!src/**/*.spec.js', '!src/assets/**/*.js' ],
     jsunit: [ 'src/**/*.spec.js' ],
-    
+
     coffee: [ 'src/**/*.coffee', '!src/**/*.spec.coffee' ],
     coffeeunit: [ 'src/**/*.spec.coffee' ],
 
-    atpl: [ 'src/app/**/*.tpl.html' ],
-    ctpl: [ 'src/common/**/*.tpl.html' ],
+    ajade: [ 'src/app/**/*.jade'],
+    cjade: [ 'src/common/**/*.jade'],
 
+    atpl: [ '<%= build_dir %>/src/app/**/*.tpl.html', ],
+    ctpl: [ '<%= build_dir %>/src/common/**/*.tpl.html', ],
+
+    index: ['src/index.jade'],
+    index_tpl: ['src/index.tpl.jade'],
     html: [ 'src/index.html' ],
-    less: 'src/less/main.less'
+
+    sass: ['src/sass/'],
+
+    fonts: ['assets/fonts/'],
+    images: ['assets/images']
   },
 
   /**
@@ -38,7 +48,7 @@ module.exports = {
    */
   test_files: {
     js: [
-      'vendor/angular-mocks/angular-mocks.js'
+      // 'vendor/angular-mocks/angular-mocks.js'
     ]
   },
 
@@ -61,16 +71,19 @@ module.exports = {
    * recommended that you use wildcards.
    */
   vendor_files: {
-    js: [
+     js: [
+      'vendor/jquery/dist/jquery.min.js',
       'vendor/angular/angular.js',
       'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
       'vendor/placeholders/angular-placeholders-0.0.1-SNAPSHOT.min.js',
+	    'vendor/bootstrap-sass-official/assets/javascripts/bootstrap.js',
       'vendor/angular-ui-router/release/angular-ui-router.js',
-      'vendor/angular-ui-utils/modules/route/route.js'
+      'vendor/angular-ui-utils/modules/route/route.js',
     ],
     css: [
     ],
     assets: [
+      'vendor/bootstrap-sass-official/assets/fonts/**/*.*'
     ]
   },
 };

@@ -13,8 +13,7 @@
  * specified, as shown below.
  */
 angular.module( 'ngBoilerplate.home', [
-  'ui.router',
-  'plusOne'
+  'ui.router'
 ])
 
 /**
@@ -42,4 +41,3 @@ angular.module( 'ngBoilerplate.home', [
 })
 
 ;
-
