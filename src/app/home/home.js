@@ -12,8 +12,9 @@
  * The dependencies block here is also where component dependencies should be
  * specified, as shown below.
  */
-angular.module( 'ngBoilerplate.home', [
-  'ui.router'
+angular.module( 'ngCannatel.home', [
+  'ui.router',
+  'firebase'
 ])
 
 /**
@@ -23,6 +24,7 @@ angular.module( 'ngBoilerplate.home', [
  */
 .config(function config( $stateProvider ) {
   $stateProvider.state( 'home', {
+    parent: 'site',
     url: '/home',
     views: {
       "main": {
@@ -30,14 +32,33 @@ angular.module( 'ngBoilerplate.home', [
         templateUrl: 'home/home.tpl.html'
       }
     },
-    data:{ pageTitle: 'Home' }
+    data:{ pageTitle: 'Home', roles: ['User'] }
   });
 })
 
 /**
  * And of course we define a controller for our route.
  */
-.controller( 'HomeCtrl', function HomeController( $scope ) {
-})
+.controller( 'HomeCtrl', function HomeController( $scope, $firebase ) {
+  var ref = new Firebase('https://cannatel.firebaseio.com/');
 
-;
+  // create an AngularFire reference to the data
+  var sync = $firebase(ref);
+
+  // download the data into a local object
+  var syncObject = sync.$asObject();
+
+  // synchronize the object with a three-way data binding
+  // click on `index.html` above to see it used in the DOM!
+  syncObject.$bindTo($scope, "data");
+
+  $scope.login = function() {
+    ref.authWithOAuthPopup("facebook", function(error, authData) {
+      if (error) {
+        console.log("Login Failed!", error);
+      } else {
+        console.log("Authenticated successfully with payload:", authData);
+      }
+    });
+  };
+});
