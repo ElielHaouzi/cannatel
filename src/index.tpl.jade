@@ -24,13 +24,11 @@ head
             span.icon-bar
             span.icon-bar
           .navbar-brand
-            | Cannatel
-            small
-              a(href='href', http:='http:', github.com='github.com', ngbp='ngbp', blob='blob', v='v')
+            a(href, ui-sref='home') Cannatel
         .collapse.navbar-collapse(collapse='menuCollapsed')
           ul.nav.navbar-nav
-            li(ui-sref-active='active', ng-show='principal.isAuthenticated()')
-              a(href='href', ui-sref='home')
+            li(ui-sref-active='active', ng-show='isIdentified()')
+              a(href, ui-sref='home')
                 i.fa.fa-home
                 |  Home
             li(ui-sref-active='active')

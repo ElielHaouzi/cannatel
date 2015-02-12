@@ -14,7 +14,9 @@
  */
 angular.module( 'ngCannatel.home', [
   'ui.router',
-  'firebase'
+  'ngCannatel.dal',
+  'fbAuth',
+  'chart.js'
 ])
 
 /**
@@ -24,13 +26,18 @@ angular.module( 'ngCannatel.home', [
  */
 .config(function config( $stateProvider ) {
   $stateProvider.state( 'home', {
-    parent: 'site',
-    url: '/home',
+    // parent: 'requireAuth',
+    url: '/',
     views: {
       "main": {
         controller: 'HomeCtrl',
         templateUrl: 'home/home.tpl.html'
       }
+    },
+    resolve: {
+      currentAuth: ['Auth', function(Auth) {
+        return Auth.$requireAuth();
+      }]
     },
     data:{ pageTitle: 'Home', roles: ['User'] }
   });
@@ -39,26 +46,78 @@ angular.module( 'ngCannatel.home', [
 /**
  * And of course we define a controller for our route.
  */
-.controller( 'HomeCtrl', function HomeController( $scope, $firebase ) {
-  var ref = new Firebase('https://cannatel.firebaseio.com/');
+.controller( 'HomeCtrl', function HomeController( $scope, currentAuth, userManager, statsManager) {
 
-  // create an AngularFire reference to the data
-  var sync = $firebase(ref);
+  $scope.currentAuth = currentAuth;
+  $scope.users = userManager.getAllUsers();
+  $scope.me = userManager.getUser(currentAuth.uid);
 
-  // download the data into a local object
-  var syncObject = sync.$asObject();
+  // // var ref = new Firebase('https://cannatel.firebaseio.com/');
+  //
+  // // create an AngularFire reference to the data
+  // var sync = $firebase(ref);
+  //
+  // // download the data into a local object
+  // var syncObject = sync.$asObject();
+  //
+  // // synchronize the object with a three-way data binding
+  // // click on `index.html` above to see it used in the DOM!
+  // syncObject.$bindTo($scope, "data");
 
-  // synchronize the object with a three-way data binding
-  // click on `index.html` above to see it used in the DOM!
-  syncObject.$bindTo($scope, "data");
+  // $scope.me = new User(currentAuth.uid);
+  // console.log($scope.me);
 
-  $scope.login = function() {
-    ref.authWithOAuthPopup("facebook", function(error, authData) {
-      if (error) {
-        console.log("Login Failed!", error);
-      } else {
-        console.log("Authenticated successfully with payload:", authData);
-      }
-    });
+  $scope.inc = function(user, canType) {
+    // Adding to current
+    user.current[canType] += 1;
+    // Adding to total
+    user.total[canType] += 1;
+
+    // add to stat
+    statsManager.addToStat($scope.currentAuth.uid, canType);
+
+    // Save
+    $scope.users.$save(user);
   };
+
+  $scope.dec = function(user, canType) {
+    // Adding to current
+    if (user.current[canType] == 1 || user.current[canType] === 0) {
+      user.current[canType] = 0;
+    }
+    else {
+      user.current[canType] -= 1;
+    }
+
+    // Save
+    $scope.users.$save(user);
+  };
+
+  $scope.reset = function(user, canType) {
+    user.current[canType] = 0;
+
+    // Save
+    $scope.users.$save(user);
+  };
+
+  $scope.todayStats = statsManager.getTodayStats();
+  $scope.stats = {};
+
+  $scope.todayStats.$watch(function(event){
+    if (event.event == 'child_added') {
+
+      stat = $scope.todayStats.$getRecord(event.key);
+      $scope.stats[stat.canType] = ($scope.stats[stat.canType] === undefined)?1:$scope.stats[stat.canType]+1;
+
+      if (stat.user == $scope.me.$id) {
+        $scope.meTodayLabels = _.keys($scope.stats);
+        $scope.meTodayData = _.values($scope.stats);
+      }
+
+      $scope.todayLabels = _.keys($scope.stats);
+      $scope.todayData = _.values($scope.stats);
+    }
+  });
+
+
 });

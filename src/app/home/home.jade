@@ -1,5 +1,120 @@
-p {{data}}
-
-p
-  //- anything typed in here is magically saved to Firebase!
-  input(type="text", ng-model="data.test")
+.container
+  .row
+    .col-sm-8
+      .panel.panel-default
+        .panel-heading
+          h3 Canettes
+        .panel-body
+          .table-responsive
+            table.table.table-bordered
+              thead
+                tr
+                  th Name
+                  th Fanta
+                  th Coca
+                  th Zero
+                  th XL
+                  th Blue
+              tbody
+                tr(ng-repeat='(key, user) in users')
+                  td {{user.name}}
+                  td
+                    div
+                      div.text-center
+                        span {{user.current.fanta}}
+                      div.text-center(ng-show='key == me.$id')
+                        button(ng-click='reset(user, "fanta")')
+                          i.fa.fa-money.fa-fw
+                        | 
+                        button(ng-click='inc(user, "fanta")') 
+                          i.fa.fa-plus.fa-fw
+                  td
+                    div
+                      div.text-center
+                        span {{user.current.coca}}
+                      div.text-center(ng-show='key == me.$id')
+                        button(ng-click='reset(user, "coca")')
+                          i.fa.fa-money.fa-fw
+                        | 
+                        button(ng-click='inc(user, "coca")') 
+                          i.fa.fa-plus.fa-fw
+                  td
+                    div
+                      div.text-center(ng-show='key == me.$id')
+                        span {{user.current.zero}}
+                      div.text-center
+                        button(ng-click='reset(user, "zero")')
+                          i.fa.fa-money.fa-fw
+                        | 
+                        button(ng-click='inc(user, "zero")') 
+                          i.fa.fa-plus.fa-fw
+                  td
+                    div
+                      div.text-center
+                        span {{user.current.xl}}
+                      div.text-center(ng-show='key == me.$id')
+                        button(ng-click='reset(user, "xl")')
+                          i.fa.fa-money.fa-fw
+                        | 
+                        button(ng-click='inc(user, "xl")') 
+                          i.fa.fa-plus.fa-fw
+                  td
+                    div
+                      div.text-center
+                        span {{user.current.blue}}
+                      div.text-center(ng-show='key == me.$id')
+                        button(ng-click='reset(user, "blue")')
+                          i.fa.fa-money.fa-fw
+                        | 
+                        button(ng-click='inc(user, "blue")') 
+                          i.fa.fa-plus.fa-fw
+    .col-md-4
+      .panel.panel-default
+        .panel-heading
+          h3 Total
+        .panel-body
+          .table-responsive
+            table.table.table-bordered
+              thead
+                tr
+                  th Name
+                  th Fanta
+                  th Coca
+                  th Zero
+                  th XL
+                  th Blue
+              tbody
+                tr(ng-repeat='user in users')
+                  td {{user.name}}
+                  td {{user.total.fanta}}
+                  td {{user.total.coca}}
+                  td {{user.total.zero}}
+                  td {{user.total.xl}}
+                  td {{user.total.blue}}
+  .row
+    .col-md-6
+      .panel.panel-default
+        .panel-heading
+          h3 Mes Statistiques - {{me.name}}
+        .panel-body
+          tabset(justified='true')
+            tab(heading='Day')
+              div(ng-show='meTodayData')
+                canvas#doughnut.chart.chart-doughnut(data="meTodayData", labels="meTodayLabels", legend="true")
+              div(ng-hide='meTodayData')
+                h6 Vous n'avez encore rien bu aujourd'hui.
+            tab(heading='Month') Short Labeled Justified conten
+            tab(heading='Year') Long Labeled Justified content
+    .col-md-6
+      .panel.panel-default
+        .panel-heading
+          h3 Statistiques G&eacute;n&eacute;rales
+        .panel-body
+          tabset(justified='true')
+            tab(heading='Day')
+              div(ng-show='meTodayData')
+                canvas#doughnut.chart.chart-doughnut(data="meTodayData", labels="meTodayLabels", legend="true")
+              div(ng-hide='meTodayData')
+                h6 Personne n'a encore rien bu aujourd'hui.
+            tab(heading='Month') Short Labeled Justified conten
+            tab(heading='Year') Long Labeled Justified content

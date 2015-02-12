@@ -1,46 +1,50 @@
 angular.module( 'ngCannatel', [
   'templates-app',
   'templates-common',
+  'ngCannatel.dal',
   'ngCannatel.home',
   'ngCannatel.about',
   'ngCannatel.signin',
   'ui.router',
-  'ehAuth'
+  'fbAuth'
 ])
 
 .config( function myAppConfig ( $stateProvider, $urlRouterProvider ) {
-  $urlRouterProvider.otherwise( '/signin' );
+  $urlRouterProvider.otherwise( '/' );
 
-  $stateProvider.state('site', {
-    'abstract': true,
-    resolve: {
-      authorize: ['authorization',
-        function(authorization) {
-          return authorization.authorize(true);
-        }
-      ]
+  // $stateProvider.state('requireAuth', {
+  //   'abstract': true,
+  //   resolve: {
+  //     currentAuth: ['Auth', function(Auth) {
+  //       console.log(Auth.$requireAuth());
+  //       return Auth.$requireAuth();
+  //     }]
+  //   }
+  // });
+
+})
+
+.run( function run ($rootScope, $state, $stateParams) {
+  $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
+    console.log(error);
+    // We can catch the error thrown when the $requireAuth promise is rejected
+    // and redirect the user back to the home page
+    if (error === "AUTH_REQUIRED") {
+      $state.go("signin");
     }
+
   });
 })
 
-.run( function run ($rootScope, $state, $stateParams, authorization, principal) {
-  $rootScope.$on('$stateChangeStart', function(event, toState, toStateParams, fromState, fromParams, error) {
-    $rootScope.toState = toState;
-    $rootScope.toStateParams = toStateParams;
-
-    if (principal.isIdentityResolved()) {
-      authorization.authorize();
-    }
-  });
-})
-
-.controller( 'AppCtrl', function AppCtrl ( $scope, $location, principal ) {
+.controller( 'AppCtrl', function AppCtrl ( $scope, $location, Auth ) {
   $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
     if ( angular.isDefined( toState.data.pageTitle ) ) {
       $scope.pageTitle = toState.data.pageTitle + ' | Cannatel' ;
     }
-
-    $scope.principal = principal;
   });
 
+  $scope.isIdentified = function() {
+    $scope.authData = Auth.$getAuth();
+    return $scope.authData == null;
+  };
 });

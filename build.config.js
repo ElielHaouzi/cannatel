@@ -80,9 +80,13 @@ module.exports = {
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/firebase/firebase.js',
-      'vendor/angularfire/dist/angularfire.min.js'
+      'vendor/angularfire/dist/angularfire.min.js',
+      'vendor/Chart.js/Chart.min.js',
+      'vendor/angular-chart.js/dist/angular-chart.js',
+      'vendor/underscore/underscore-min.js'
     ],
     css: [
+      'vendor/angular-chart.js/dist/angular-chart.css'
     ],
     assets: [
       'vendor/bootstrap-sass-official/assets/fonts/**/*.*'

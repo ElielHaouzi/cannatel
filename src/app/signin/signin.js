@@ -1,6 +1,8 @@
 angular.module( 'ngCannatel.signin', [
   'ui.router',
-  'firebase'
+  'firebase',
+  'fbAuth',
+  'ngCannatel.dal'
 ])
 
 /**
@@ -24,10 +26,21 @@ angular.module( 'ngCannatel.signin', [
 /**
  * And of course we define a controller for our route.
  */
-.controller( 'SigninCtrl', function SigninController( $scope, $state, principal, $firebase ) {
+.controller( 'SigninCtrl', function SigninController( $scope, $state, $firebase, Auth, userManager) {
 
   $scope.signin = function() {
-    principal.authenticate();
+    // principal.authenticate();
+    Auth.$authWithOAuthPopup("facebook").then(function(authData) {
+      console.log("Logged in as:", authData.uid);
+
+      userManager.createUser(authData);
+
+      $state.go('home');
+    }, {remember: "sessionOnly"});
   };
-  
+
+  Auth.$onAuth(function(authData) {
+     $scope.authData = authData;
+     $state.go('home');
+  });
 });
