@@ -13,7 +13,7 @@ angular.module('ngCannatel.dal', [
 
 .service('userManager', function($firebase){
 
-   this.getAllUsers = function() {
+   this.getAllUsers = function(authUid) {
      var usersRef = new Firebase("https://cannatel.firebaseio.com/users/");
      // return it as a synchronized object
      return $firebase(usersRef).$asObject();
@@ -27,9 +27,8 @@ angular.module('ngCannatel.dal', [
          total: {coca: 0, xl: 0, zero: 0, blue: 0, fanta: 0}
        };
 
-       var users = this.getAllUsers();
-       users[authData.uid] = userObject;
-       users.$save().then(function(ref){}, function(erro){});
+       var usersRef = new Firebase("https://cannatel.firebaseio.com/users/");
+       usersRef.child(authData.uid).set(userObject);
      }
    };
 

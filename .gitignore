@@ -6,3 +6,4 @@ node_modules/
 vendor/
 index.jade
 .sass-cache
+dist

@@ -49,33 +49,16 @@ angular.module( 'ngCannatel.home', [
 .controller( 'HomeCtrl', function HomeController( $scope, currentAuth, userManager, statsManager) {
 
   $scope.currentAuth = currentAuth;
-  $scope.users = userManager.getAllUsers();
+  $scope.users = userManager.getAllUsers(currentAuth.uid);
   $scope.me = userManager.getUser(currentAuth.uid);
-
-  // // var ref = new Firebase('https://cannatel.firebaseio.com/');
-  //
-  // // create an AngularFire reference to the data
-  // var sync = $firebase(ref);
-  //
-  // // download the data into a local object
-  // var syncObject = sync.$asObject();
-  //
-  // // synchronize the object with a three-way data binding
-  // // click on `index.html` above to see it used in the DOM!
-  // syncObject.$bindTo($scope, "data");
-
-  // $scope.me = new User(currentAuth.uid);
-  // console.log($scope.me);
 
   $scope.inc = function(user, canType) {
     // Adding to current
     user.current[canType] += 1;
     // Adding to total
     user.total[canType] += 1;
-
-    // add to stat
+    // Add to stat
     statsManager.addToStat($scope.currentAuth.uid, canType);
-
     // Save
     $scope.users.$save(user);
   };
@@ -88,7 +71,6 @@ angular.module( 'ngCannatel.home', [
     else {
       user.current[canType] -= 1;
     }
-
     // Save
     $scope.users.$save(user);
   };
@@ -102,18 +84,19 @@ angular.module( 'ngCannatel.home', [
 
   $scope.todayStats = statsManager.getTodayStats();
   $scope.stats = {};
+  $scope.meStats = {};
 
   $scope.todayStats.$watch(function(event){
     if (event.event == 'child_added') {
-
       stat = $scope.todayStats.$getRecord(event.key);
-      $scope.stats[stat.canType] = ($scope.stats[stat.canType] === undefined)?1:$scope.stats[stat.canType]+1;
 
       if (stat.user == $scope.me.$id) {
-        $scope.meTodayLabels = _.keys($scope.stats);
-        $scope.meTodayData = _.values($scope.stats);
+        $scope.meStats[stat.canType] = ($scope.meStats[stat.canType] === undefined)?1:$scope.meStats[stat.canType]+1;
+        $scope.meTodayLabels = _.keys($scope.meStats);
+        $scope.meTodayData = _.values($scope.meStats);
       }
 
+      $scope.stats[stat.canType] = ($scope.stats[stat.canType] === undefined)?1:$scope.stats[stat.canType]+1;
       $scope.todayLabels = _.keys($scope.stats);
       $scope.todayData = _.values($scope.stats);
     }

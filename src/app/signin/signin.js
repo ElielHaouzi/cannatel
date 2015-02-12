@@ -36,7 +36,7 @@ angular.module( 'ngCannatel.signin', [
       userManager.createUser(authData);
 
       $state.go('home');
-    }, {remember: "sessionOnly"});
+    }); // {remember: "sessionOnly"}
   };
 
   Auth.$onAuth(function(authData) {

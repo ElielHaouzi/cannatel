@@ -8,7 +8,7 @@ module.exports = {
    * completely built.
    */
   build_dir: 'build',
-  compile_dir: 'bin',
+  compile_dir: 'dist',
   tmp_dir: '.tmp',
 
   /**
@@ -81,7 +81,7 @@ module.exports = {
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/firebase/firebase.js',
       'vendor/angularfire/dist/angularfire.min.js',
-      'vendor/Chart.js/Chart.min.js',
+      'vendor/chartjs/Chart.min.js',
       'vendor/angular-chart.js/dist/angular-chart.js',
       'vendor/underscore/underscore-min.js'
     ],
