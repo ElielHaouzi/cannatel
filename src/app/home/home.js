@@ -63,44 +63,118 @@ angular.module( 'ngCannatel.home', [
     $scope.users.$save(user);
   };
 
-  $scope.dec = function(user, canType) {
-    // Adding to current
-    if (user.current[canType] == 1 || user.current[canType] === 0) {
-      user.current[canType] = 0;
-    }
-    else {
-      user.current[canType] -= 1;
-    }
-    // Save
-    $scope.users.$save(user);
-  };
-
   $scope.reset = function(user, canType) {
     user.current[canType] = 0;
-
     // Save
     $scope.users.$save(user);
   };
 
-  $scope.todayStats = statsManager.getTodayStats();
-  $scope.stats = {};
-  $scope.meStats = {};
+  var stats = {
+    'all': {
+      'today': {},
+      'curr_month': {},
+      'curr_year': {}
+    },
+    'me': {
+      'today': {},
+      'curr_month': {},
+      'curr_year': {}
+    }
+  };
 
-  $scope.todayStats.$watch(function(event){
+  $scope.today = {
+    'all': {'labels':[], 'data':[]},
+    'me': {'labels':[], 'data': []}
+  };
+
+  var todayStats = statsManager.getTodayStats();
+  todayStats.$watch(function(event) {
+    // Update only on child_added event
     if (event.event == 'child_added') {
-      stat = $scope.todayStats.$getRecord(event.key);
+      var n_rec = todayStats.$getRecord(event.key);
+      var s_a_today = stats.all.today;
+      var s_m_today = stats.me.today;
 
-      if (stat.user == $scope.me.$id) {
-        $scope.meStats[stat.canType] = ($scope.meStats[stat.canType] === undefined)?1:$scope.meStats[stat.canType]+1;
-        $scope.meTodayLabels = _.keys($scope.meStats);
-        $scope.meTodayData = _.values($scope.meStats);
+      // The record belong to the current user.
+      if (n_rec.user == $scope.me.$id) {
+        // Increment the counter for this type of can.
+        s_m_today[n_rec.canType] = s_m_today[n_rec.canType] + 1 || 1;
       }
+      // Update the stats for this type of can
+      s_a_today[n_rec.canType] = s_a_today[n_rec.canType] + 1 || 1;
 
-      $scope.stats[stat.canType] = ($scope.stats[stat.canType] === undefined)?1:$scope.stats[stat.canType]+1;
-      $scope.todayLabels = _.keys($scope.stats);
-      $scope.todayData = _.values($scope.stats);
+      // Update the "me" and "all" scopes variables
+      $scope.today.me.labels = _.keys(s_m_today);
+      $scope.today.me.data = _.values(s_m_today);
+
+      $scope.today.all.labels = _.keys(s_a_today);
+      $scope.today.all.data = _.values(s_a_today);
     }
   });
 
+  $scope.curr_month = {
+    'all': {'labels':[], 'series':[], 'data':[]},
+    'me': {'labels':[], 'series':[], 'data':[]}
+  };
 
+  function getDayOfMonth(ts) {
+    var d = new Date(ts);
+    return d.getDate();
+  }
+
+  var currentMonthStats = statsManager.getCurrentMonthStats();
+  currentMonthStats.$watch(function(event){
+    if (event.event == 'child_added') {
+      var n_rec = currentMonthStats.$getRecord(event.key),
+          s_a_curr_month = stats.all.curr_month,
+          s_m_curr_month = stats.me.curr_month,
+          day = getDayOfMonth(n_rec['time']);
+
+      // This record belongs to the current user
+      if (n_rec.user == $scope.me.$id) {
+        s_m_curr_month[day] = s_m_curr_month[day] || {};
+        s_m_curr_month[day][n_rec['canType']] = s_m_curr_month[day][n_rec['canType']] + 1 || 1;
+
+        // Add the this type of can to the all stats
+        if (!(_.contains($scope.curr_month.me.series, n_rec['canType']))) {
+          $scope.curr_month.me.series.push(n_rec['canType']);
+        }
+
+        // Update "me" scope variables
+        $scope.curr_month.me.labels = _.keys(s_m_curr_month);
+        $scope.curr_month.me.data = [];
+        _.each($scope.curr_month.me.series, function(s_el){
+          var arr_series_data = [];
+          _.each($scope.curr_month.me.labels, function(l_el){
+            val = s_m_curr_month[l_el][s_el] || 0;
+            arr_series_data.push(val);
+          });
+          $scope.curr_month.me.data.push(arr_series_data);
+        });
+      }
+
+      // For Global Stats
+      s_a_curr_month[day] = s_a_curr_month[day] || {};
+      s_a_curr_month[day][n_rec['canType']] = s_a_curr_month[day][n_rec['canType']] + 1 || 1;
+
+      // Add the this type of can to the all stats
+      if (!(_.contains($scope.curr_month.all.series, n_rec['canType']))) {
+        $scope.curr_month.all.series.push(n_rec['canType']);
+      }
+      // console.log(s_m_curr_month);
+      // console.log(s_a_curr_month);
+
+      // Update "all" scope variables
+      $scope.curr_month.all.labels = _.keys(s_a_curr_month);
+      $scope.curr_month.all.data = [];
+      _.each($scope.curr_month.all.series, function(s_el){
+        var arr_series_data = [];
+        _.each($scope.curr_month.all.labels, function(l_el){
+          val = s_a_curr_month[l_el][s_el] || 0;
+          arr_series_data.push(val);
+        });
+        $scope.curr_month.all.data.push(arr_series_data);
+      });
+    }
+  });
 });

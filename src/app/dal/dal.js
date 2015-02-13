@@ -44,6 +44,7 @@ angular.module('ngCannatel.dal', [
 })
 
 .service('statsManager', function($firebase) {
+
   this.addToStat = function(authUid, canType) {
     var statsRef = new Firebase("https://cannatel.firebaseio.com/stats/");
     var sync = $firebase(statsRef).$asArray();
@@ -56,6 +57,16 @@ angular.module('ngCannatel.dal', [
     d.setHours(0,0,0,0);
 
     var statsRef = new Firebase("https://cannatel.firebaseio.com/stats/").orderByChild("time").startAt(d.getTime());
+    return $firebase(statsRef).$asArray();
+  };
+
+  this.getCurrentMonthStats = function() {
+    var d = new Date();
+    d.setHours(0, 0, 0, 0);
+    var ts_from = d.setDate(1);
+    var ts_to = new Date(d.getFullYear(), d.getMonth()+1, 1).getTime();
+
+    var statsRef = new Firebase("https://cannatel.firebaseio.com/stats/").orderByChild("time").startAt(ts_from).endAt(ts_to);
     return $firebase(statsRef).$asArray();
   };
 });

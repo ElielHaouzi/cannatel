@@ -97,23 +97,27 @@
         .panel-heading
           h4 Mes Statistiques - {{me.name}}
         .panel-body
-          tabset(justified='true')
-            tab(heading='Day')
-              div(ng-hide='meTodayData')
+          .row
+            .col-md-6
+              div(ng-hide='today.me.data')
                 h6 Vous n'avez encore rien bu aujourd'hui.
-              canvas#doughnut.chart.chart-doughnut(data="meTodayData", labels="meTodayLabels")
-              
-            tab(heading='Month') Short Labeled Justified conten
-            tab(heading='Year') Long Labeled Justified content
+              canvas#doughnut.chart.chart-doughnut(data="today.me.data", labels="today.me.labels")
+            .col-md-6
+              canvas#line.chart.chart-line(data='curr_month.me.data', labels='curr_month.me.labels', series='curr_month.me.series')
     .col-md-6
       .panel.panel-default
         .panel-heading
           h4 Statistiques G&eacute;n&eacute;rales
         .panel-body
-          tabset(justified='true')
-            tab(heading='Day')
-              div(ng-hide='todayData')
+          .row
+            .col-md-6
+              div(ng-hide='today.all.data')
                 h6 Personne n'a encore rien bu aujourd'hui.
-              canvas#doughnut.chart.chart-doughnut(data="todayData", labels="todayLabels")
-            tab(heading='Month') Short Labeled Justified conten
-            tab(heading='Year') Long Labeled Justified content
+              canvas#doughnut.chart.chart-doughnut(data="today.all.data", labels="today.all.labels")
+            .col-md-6
+              canvas#line.chart.chart-line(data='curr_month.all.data', labels='curr_month.all.labels', series='curr_month.all.series')
+          //- tabset(justified='true')
+          //-   tab(heading='Day')
+          //-     
+          //-   tab(heading='Month') Short Labeled Justified conten
+          //-   tab(heading='Year') Long Labeled Justified content
