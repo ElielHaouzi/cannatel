@@ -1,0 +1,116 @@
+.container-fluid
+  .row
+    .col-sm-8
+      .panel.panel-default
+        .panel-heading
+          h4 Canettes
+        .panel-body
+          .table-responsive
+            table.table.table-bordered
+              thead
+                tr
+                  th Name
+                  th Fanta
+                  th Coca
+                  th Zero
+                  th XL
+                  th Blue
+              tbody
+                tr
+                  td {{me.name}}
+                  td
+                    div
+                      div.text-center
+                        span {{me.current.fanta}}
+                      div.text-center
+                        button(ng-click='reset(me, "fanta")')
+                          i.fa.fa-money.fa-fw
+                        | 
+                        button(ng-click='inc(me, "fanta")') 
+                          i.fa.fa-plus.fa-fw
+                  td
+                    div
+                      div.text-center
+                        span {{me.current.coca}}
+                      div.text-center
+                        button(ng-click='reset(me, "coca")')
+                          i.fa.fa-money.fa-fw
+                        | 
+                        button(ng-click='inc(me, "coca")') 
+                          i.fa.fa-plus.fa-fw
+                  td
+                    div
+                      div.text-center
+                        span {{me.current.zero}}
+                      div.text-center
+                        button(ng-click='reset(me, "zero")')
+                          i.fa.fa-money.fa-fw
+                        | 
+                        button(ng-click='inc(me, "zero")') 
+                          i.fa.fa-plus.fa-fw
+                  td
+                    div
+                      div.text-center
+                        span {{me.current.xl}}
+                      div.text-center
+                        button(ng-click='reset(me, "xl")')
+                          i.fa.fa-money.fa-fw
+                        | 
+                        button(ng-click='inc(me, "xl")') 
+                          i.fa.fa-plus.fa-fw
+                  td
+                    div
+                      div.text-center
+                        span {{me.current.blue}}
+                      div.text-center
+                        button(ng-click='reset(me, "blue")')
+                          i.fa.fa-money.fa-fw
+                        | 
+                        button(ng-click='inc(me, "blue")') 
+                          i.fa.fa-plus.fa-fw
+    .col-md-4
+      .panel.panel-default
+        .panel-heading
+          h4 Total
+        .panel-body
+          .table-responsive
+            table.table.table-bordered
+              thead
+                tr
+                  th Fanta
+                  th Coca
+                  th Zero
+                  th XL
+                  th Blue
+                  th Total
+              tbody
+                tr
+                  td {{me.total.fanta}}
+                  td {{me.total.coca}}
+                  td {{me.total.zero}}
+                  td {{me.total.xl}}
+                  td {{me.total.blue}}
+                  td {{me.total.fanta + me.total.coca + me.total.zero + me.total.xl + me.total.blue}}
+                  
+  .row
+    .col-md-6
+      .panel.panel-default
+        .panel-heading
+          h4 {{ts_today | date:'dd/MM/yyyy'}}
+        .panel-body
+          div(ng-hide='today.me.data')
+            h6 Vous n'avez encore rien bu aujourd'hui.
+          canvas#pie.chart.chart-pie(data="today.me.data", labels="today.me.labels")
+    .col-md-6
+      .panel.panel-default
+        .panel-heading
+          h4 {{ts_today | date:'MM/yyyy'}}
+        .panel-body
+          canvas.chart.chart-bar(data='curr_month.me.data', labels='curr_month.me.labels', series='curr_month.me.series')
+  .row
+    .col-md-12
+      .panel.panel-default
+        .panel-heading
+          h4 {{ts_today | date:'yyyy'}}
+        .panel-body
+          canvas.chart.chart-bar(data='curr_year.me.data', labels='curr_year.me.labels_name', series='curr_year.me.series')

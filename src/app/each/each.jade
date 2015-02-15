@@ -1,0 +1,72 @@
+.container-fluid
+  .row
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          h4 Canettes
+        .panel-body
+          .table-responsive
+            table.table.table-bordered
+              thead
+                tr
+                  th Name
+                  th Fanta
+                  th Coca
+                  th Zero
+                  th XL
+                  th Blue
+              tbody
+                tr(ng-repeat='user in users')
+                  td {{user.name}}
+                  td
+                    div
+                      div.text-center
+                        span {{user.current.fanta}}
+                  td
+                    div
+                      div.text-center
+                        span {{user.current.coca}}
+                  td
+                    div
+                      div.text-center
+                        span {{user.current.zero}}
+                  td
+                    div
+                      div.text-center
+                        span {{user.current.xl}}
+                  td
+                    div
+                      div.text-center
+                        span {{user.current.blue}}
+    .col-md-6
+      .panel.panel-default
+        .panel-heading
+          h4 Total
+        .panel-body
+          .table-responsive
+            table.table.table-bordered
+              thead
+                tr
+                  th Name
+                  th Fanta
+                  th Coca
+                  th Zero
+                  th XL
+                  th Blue
+                  th Total
+              tbody
+                tr(ng-repeat='user in users')
+                  td {{user.name}}
+                  td {{user.total.fanta}}
+                  td {{user.total.coca}}
+                  td {{user.total.zero}}
+                  td {{user.total.xl}}
+                  td {{user.total.blue}}
+                  td {{user.total.fanta + user.total.coca + user.total.zero + user.total.xl + user.total.blue}}
+  .row
+    .col-md-6(ng-repeat='(key, user) in users')
+      .panel.panel-default
+        .panel-heading
+          h4 {{user.name}}
+        .panel-body
+          canvas#line.chart.chart-bar(data='curr_month[key]["data"]', labels='curr_month[key]["labels"]', series='curr_month[key]["series"]')

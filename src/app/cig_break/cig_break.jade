@@ -1,0 +1,32 @@
+.container-fluid
+  .row
+    .col-md-12
+      p.text-center
+        button.btn(ng-class='{"btn-danger": !me.cig_break, "btn-info": me.cig_break}', ng-click="me.cig_break = !me.cig_break; me.$save(me)") {{cig_break_text[me.cig_break]}}
+  .row
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          h4 Les gens qui bossent
+        .panel-body
+          .table-responsive
+            table.table.table-bordered
+              thead
+                tr
+                  th Name
+              tbody
+                tr(ng-repeat='user in users')
+                  td(ng-hide='user.cig_break') {{user.name}}
+    .col-md-6
+      .panel.panel-default
+        .panel-heading
+          h4 Les gens qui ne foutent rien..
+        .panel-body
+          .table-responsive
+            table.table.table-bordered
+              thead
+                tr
+                  th Name
+              tbody
+                tr(ng-repeat='user in users')
+                  td(ng-show='user.cig_break') {{user.name}}

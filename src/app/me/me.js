@@ -12,7 +12,7 @@
  * The dependencies block here is also where component dependencies should be
  * specified, as shown below.
  */
-angular.module( 'ngCannatel.home', [
+angular.module( 'ngCannatel.me', [
   'ui.router',
   'ngCannatel.dal',
   'fbAuth',
@@ -25,13 +25,13 @@ angular.module( 'ngCannatel.home', [
  * this way makes each module more "self-contained".
  */
 .config(function config( $stateProvider ) {
-  $stateProvider.state( 'home', {
+  $stateProvider.state( 'me', {
     // parent: 'requireAuth',
-    url: '/',
+    url: '/me',
     views: {
       "main": {
-        controller: 'HomeCtrl',
-        templateUrl: 'home/home.tpl.html'
+        controller: 'MeCtrl',
+        templateUrl: 'me/me.tpl.html'
       }
     },
     resolve: {
@@ -46,11 +46,12 @@ angular.module( 'ngCannatel.home', [
 /**
  * And of course we define a controller for our route.
  */
-.controller( 'HomeCtrl', function HomeController( $scope, currentAuth, userManager, statsManager) {
+.controller( 'MeCtrl', function HomeController( $scope, currentAuth, userManager, statsManager) {
 
   $scope.currentAuth = currentAuth;
-  $scope.users = userManager.getAllUsers(currentAuth.uid);
   $scope.me = userManager.getUser(currentAuth.uid);
+
+  $scope.ts_today = new Date().getTime();
 
   $scope.inc = function(user, canType) {
     // Adding to current
@@ -60,21 +61,16 @@ angular.module( 'ngCannatel.home', [
     // Add to stat
     statsManager.addToStat($scope.currentAuth.uid, canType);
     // Save
-    $scope.users.$save(user);
+    $scope.me.$save(user);
   };
 
   $scope.reset = function(user, canType) {
     user.current[canType] = 0;
     // Save
-    $scope.users.$save(user);
+    $scope.me.$save(user);
   };
 
   var stats = {
-    'all': {
-      'today': {},
-      'curr_month': {},
-      'curr_year': {}
-    },
     'me': {
       'today': {},
       'curr_month': {},
@@ -83,7 +79,6 @@ angular.module( 'ngCannatel.home', [
   };
 
   $scope.today = {
-    'all': {'labels':[], 'data':[]},
     'me': {'labels':[], 'data': []}
   };
 
@@ -92,7 +87,6 @@ angular.module( 'ngCannatel.home', [
     // Update only on child_added event
     if (event.event == 'child_added') {
       var n_rec = todayStats.$getRecord(event.key);
-      var s_a_today = stats.all.today;
       var s_m_today = stats.me.today;
 
       // The record belong to the current user.
@@ -100,20 +94,14 @@ angular.module( 'ngCannatel.home', [
         // Increment the counter for this type of can.
         s_m_today[n_rec.canType] = s_m_today[n_rec.canType] + 1 || 1;
       }
-      // Update the stats for this type of can
-      s_a_today[n_rec.canType] = s_a_today[n_rec.canType] + 1 || 1;
 
       // Update the "me" and "all" scopes variables
       $scope.today.me.labels = _.keys(s_m_today);
       $scope.today.me.data = _.values(s_m_today);
-
-      $scope.today.all.labels = _.keys(s_a_today);
-      $scope.today.all.data = _.values(s_a_today);
     }
   });
 
   $scope.curr_month = {
-    'all': {'labels':[], 'series':[], 'data':[]},
     'me': {'labels':[], 'series':[], 'data':[]}
   };
 
@@ -122,11 +110,15 @@ angular.module( 'ngCannatel.home', [
     return d.getDate();
   }
 
+  function getMonth(ts) {
+    var d = new Date();
+    return d.getMonth();
+  }
+
   var currentMonthStats = statsManager.getCurrentMonthStats();
   currentMonthStats.$watch(function(event){
     if (event.event == 'child_added') {
       var n_rec = currentMonthStats.$getRecord(event.key),
-          s_a_curr_month = stats.all.curr_month,
           s_m_curr_month = stats.me.curr_month,
           day = getDayOfMonth(n_rec['time']);
 
@@ -152,28 +144,49 @@ angular.module( 'ngCannatel.home', [
           $scope.curr_month.me.data.push(arr_series_data);
         });
       }
+    }
+  });
 
-      // For Global Stats
-      s_a_curr_month[day] = s_a_curr_month[day] || {};
-      s_a_curr_month[day][n_rec['canType']] = s_a_curr_month[day][n_rec['canType']] + 1 || 1;
+  $scope.curr_year = {
+    'me': {'labels':[], 'series':[], 'labels_name':[], 'data':[]}
+  };
 
-      // Add the this type of can to the all stats
-      if (!(_.contains($scope.curr_month.all.series, n_rec['canType']))) {
-        $scope.curr_month.all.series.push(n_rec['canType']);
-      }
-      // console.log(s_m_curr_month);
-      // console.log(s_a_curr_month);
+  var month_name = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                    'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
-      // Update "all" scope variables
-      $scope.curr_month.all.labels = _.keys(s_a_curr_month);
-      $scope.curr_month.all.data = [];
-      _.each($scope.curr_month.all.series, function(s_el){
-        var arr_series_data = [];
-        _.each($scope.curr_month.all.labels, function(l_el){
-          val = s_a_curr_month[l_el][s_el] || 0;
-          arr_series_data.push(val);
+  var currentYearStats = statsManager.getCurrentYearStats();
+  currentYearStats.$watch(function(event){
+    if (event.event == 'child_added') {
+      var n_rec = currentMonthStats.$getRecord(event.key),
+          s_m_curr_year = stats.me.curr_year,
+          month = getMonth(n_rec['time']);
+
+      // This record belongs to the current user
+      if (n_rec.user == $scope.me.$id) {
+        s_m_curr_year[month] = s_m_curr_year[month] || {};
+        s_m_curr_year[month][n_rec['canType']] = s_m_curr_year[month][n_rec['canType']] + 1 || 1;
+
+        // Add the this type of can to the all stats
+        if (!(_.contains($scope.curr_year.me.series, n_rec['canType']))) {
+          $scope.curr_year.me.series.push(n_rec['canType']);
+        }
+
+        // Update "me" scope variables
+        $scope.curr_year.me.labels = _.keys(s_m_curr_year);
+        $scope.curr_year.me.data = [];
+        _.each($scope.curr_year.me.series, function(s_el){
+          var arr_series_data = [];
+          _.each($scope.curr_year.me.labels, function(l_el){
+            val = s_m_curr_year[l_el][s_el] || 0;
+            arr_series_data.push(val);
+          });
+          $scope.curr_year.me.data.push(arr_series_data);
         });
-        $scope.curr_month.all.data.push(arr_series_data);
+      }
+
+      $scope.curr_year.me.labels_name = [];
+      _.each($scope.curr_year.me.labels, function (el) {
+        $scope.curr_year.me.labels_name.push(month_name[el]);
       });
     }
   });

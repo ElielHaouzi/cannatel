@@ -35,12 +35,12 @@ angular.module( 'ngCannatel.signin', [
 
       userManager.createUser(authData);
 
-      $state.go('home');
+      $state.go('me');
     }); // {remember: "sessionOnly"}
   };
 
   Auth.$onAuth(function(authData) {
      $scope.authData = authData;
-     $state.go('home');
+     $state.go('me');
   });
 });

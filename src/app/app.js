@@ -2,16 +2,17 @@ angular.module( 'ngCannatel', [
   'templates-app',
   'templates-common',
   'ngCannatel.dal',
-  'ngCannatel.home',
-  'ngCannatel.about',
+  'ngCannatel.each',
+  'ngCannatel.me',
+  'ngCannatel.cig_break',
   'ngCannatel.signin',
   'ui.router',
   'fbAuth'
 ])
 
-.config( function myAppConfig ( $stateProvider, $urlRouterProvider ) {
-  $urlRouterProvider.otherwise( '/' );
-
+.config( function myAppConfig ( $stateProvider, $urlRouterProvider, $locationProvider ) {
+  $urlRouterProvider.otherwise( '/me' );
+  // $locationProvider.html5Mode(true);
   // $stateProvider.state('requireAuth', {
   //   'abstract': true,
   //   resolve: {

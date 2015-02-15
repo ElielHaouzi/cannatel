@@ -13,7 +13,7 @@ angular.module('ngCannatel.dal', [
 
 .service('userManager', function($firebase){
 
-   this.getAllUsers = function(authUid) {
+   this.getAllUsers = function() {
      var usersRef = new Firebase("https://cannatel.firebaseio.com/users/");
      // return it as a synchronized object
      return $firebase(usersRef).$asObject();
@@ -24,7 +24,8 @@ angular.module('ngCannatel.dal', [
        userObject = {
          name: authData.facebook.displayName,
          current: {coca: 0, xl: 0, zero: 0, blue: 0, fanta: 0},
-         total: {coca: 0, xl: 0, zero: 0, blue: 0, fanta: 0}
+         total: {coca: 0, xl: 0, zero: 0, blue: 0, fanta: 0},
+         cig_break: false
        };
 
        var usersRef = new Firebase("https://cannatel.firebaseio.com/users/");
@@ -65,6 +66,17 @@ angular.module('ngCannatel.dal', [
     d.setHours(0, 0, 0, 0);
     var ts_from = d.setDate(1);
     var ts_to = new Date(d.getFullYear(), d.getMonth()+1, 1).getTime();
+
+    var statsRef = new Firebase("https://cannatel.firebaseio.com/stats/").orderByChild("time").startAt(ts_from).endAt(ts_to);
+    return $firebase(statsRef).$asArray();
+  };
+
+  this.getCurrentYearStats = function() {
+    var d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(1);
+    var ts_from = d.setMonth(0);
+    var ts_to = new Date(d.getFullYear(), 12, 1).getTime();
 
     var statsRef = new Firebase("https://cannatel.firebaseio.com/stats/").orderByChild("time").startAt(ts_from).endAt(ts_to);
     return $firebase(statsRef).$asArray();

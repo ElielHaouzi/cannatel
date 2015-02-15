@@ -24,21 +24,21 @@ head
             span.icon-bar
             span.icon-bar
           .navbar-brand
-            a(href, ui-sref='home') Cannatel
+            a(href, ui-sref='me') Cannatel
         .collapse.navbar-collapse(collapse='menuCollapsed')
           ul.nav.navbar-nav
-            li(ui-sref-active='active', ng-show='isIdentified()')
-              a(href, ui-sref='home')
-                i.fa.fa-home
-                |  Home
             li(ui-sref-active='active')
-              a(href='href', ui-sref='about')
-                i.fa.fa-info-circle
-                |  What is it?
-            li
-              a(href='https://github.com/ElielHaouzi/cannatel/issues')
-                i.fa.fa-comments
-                |  Support
+              a(href, ui-sref='me')
+                i.fa.fa-user
+                |  Me
+            li(ui-sref-active='active')
+              a(href, ui-sref='each')
+                i.fa.fa-users
+                |  Each
+            li(ui-sref-active='active')
+              a(href, ui-sref='cig_break')
+                i.fa.fa-fire
+                |  Pause clope
     .container(ui-view='main')
     footer.footer
       .container
