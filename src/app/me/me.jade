@@ -106,7 +106,7 @@
         .panel-heading
           h4 {{ts_today | date:'MM/yyyy'}}
         .panel-body
-          canvas.chart.chart-bar(data='curr_month.me.data', labels='curr_month.me.labels', series='curr_month.me.series')
+          canvas.line.chart-line(data='curr_month.me.data', labels='curr_month.me.labels', series='curr_month.me.series')
   .row
     .col-md-12
       .panel.panel-default
